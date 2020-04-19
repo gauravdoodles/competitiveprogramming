@@ -1,113 +1,146 @@
-"""
-These are classes to represent a Graph and its elements.
-It can be shared across graph algorithms.
-"""
+class graph(object):
+    """
+    Graph class - made of nodes and edges
 
-class Node(object):
-    def __init__(self, name):
-        self.name = name
+    methods: add_edge, add_edges, add_node, add_nodes, has_node,
+    has_edge, nodes, edges, neighbors, del_node, del_edge, node_order,
+    set_edge_weight, get_edge_weight
+    """
 
-    @staticmethod
-    def get_name(obj):
-        if isinstance(obj, Node):
-            return obj.name
-        elif isinstance(obj, str):
-            return obj
-        return''
-    
-    def __eq__(self, obj):
-        return self.name == self.get_name(obj)
+    DEFAULT_WEIGHT = 1
+    DIRECTED = False
 
-    def __repr__(self):
-        return self.name
-    
-    def __hash__(self):
-        return hash(self.name)
+    def __init__(self):
+        self.node_neighbors = {}
 
-    def __ne__(self, obj):
-        return self.name != self.get_name(obj)
+    def __str__(self):
+        return "Undirected Graph \nNodes: %s \nEdges: %s" % (self.nodes(), self.edges())
 
-    def __lt__(self, obj):
-        return self.name < self.get_name(obj)
+    def add_nodes(self, nodes):
+        """
+        Takes a list of nodes as input and adds these to a graph
+        """
+        for node in nodes:
+            self.add_node(node)
 
-    def __le__(self, obj):
-        return self.name <= self.get_name(obj)
-
-    def __gt__(self, obj):
-        return self.name > self.get_name(obj)
-
-    def __ge__(self, obj):
-        return self.name >= self.get_name(obj)
-
-    def __bool__(self):
-        return self.name
-
-class DirectedEdge(object):
-    def __init__(self, node_from, node_to):
-        self.nf = node_from
-        self.nt = node_to
-
-    def __eq__(self, obj):
-        if isinstance(obj, DirectedEdge):
-            return obj.nf == self.nf and obj.nt == self.nt
-        return False
-    
-    def __repr__(self):
-        return '({0} -> {1})'.format(self.nf, self.nt)
-
-class DirectedGraph(object):
-    def __init__(self, load_dict={}):
-        self.nodes = []
-        self.edges = []
-        self.adjmt = {}
-
-        if load_dict and type(load_dict) == dict:
-            for v in load_dict:
-                node_from = self.add_node(v)
-                self.adjmt[node_from] = []
-                for w in load_dict[v]:
-                    node_to = self.add_node(w)
-                    self.adjmt[node_from].append(node_to)
-                    self.add_edge(v, w)
-
-    def add_node(self, node_name):
-        try:
-            return self.nodes[self.nodes.index(node_name)]
-        except ValueError:
-            node = Node(node_name)
-            self.nodes.append(node)
-            return node
-    
-    def add_edge(self, node_name_from, node_name_to):
-        try:
-            node_from = self.nodes[self.nodes.index(node_name_from)]
-            node_to = self.nodes[self.nodes.index(node_name_to)]
-            self.edges.append(DirectedEdge(node_from, node_to))
-        except ValueError:
-            pass
-
-class Graph:
-    def __init__(self, vertices):
-        # No. of vertices
-        self.V = vertices
-
-        # default dictionary to store graph
-        self.graph = {}
-
-        # To store transitive closure
-        self.tc = [[0 for j in range(self.V)] for i in range(self.V)]
-
-    # function to add an edge to graph
-    def add_edge(self, u, v):
-        if u in self.graph:
-            self.graph[u].append(v)
+    def add_node(self, node):
+        """
+        Adds a node to the graph
+        """
+        if node not in self.node_neighbors:
+            self.node_neighbors[node] = {}
         else:
-            self.graph[u] = [v]
-            
-#g = Graph(4)
-#g.add_edge(0, 1)
-#g.add_edge(0, 2)
-#g.add_edge(1, 2)
-#g.add_edge(2, 0)
-#g.add_edge(2, 3)
-#g.add_edge(3, 3)
+            raise Exception("Node %s is already in graph" % node)
+
+    def has_node(self, node):
+        """
+        Returns boolean to indicate whether a node exists in the graph
+        """
+        return node in self.node_neighbors
+
+    def add_edge(self, edge, wt=DEFAULT_WEIGHT, label=""):
+        """
+        Add an edge to the graph connecting two nodes.
+        An edge, here, is a pair of node like C(m, n) or a tuple
+        """
+        u, v = edge
+        if (v not in self.node_neighbors[u] and u not in self.node_neighbors[v]):
+            self.node_neighbors[u][v] = wt
+            if (u!=v):
+                self.node_neighbors[v][u] = wt
+        else:
+            raise Exception("Edge (%s, %s) already added in the graph" % (u, v))
+
+    def add_edges(self, edges):
+        """ Adds multiple edges in one go. Edges, here, is a list of
+        tuples"""
+        for edge in edges:
+            self.add_edge(edge)
+
+    def nodes(self):
+        """
+        Returns a list of nodes in the graph
+        """
+        return self.node_neighbors.keys()
+
+    def has_edge(self, edge):
+        """
+        Returns a boolean to indicate whether an edge exists in the
+        graph. An edge, here, is a pair of node like C(m, n) or a tuple
+        """
+        u, v = edge
+        return v in self.node_neighbors.get(u, [])
+
+    def neighbors(self, node):
+        """
+        Returns a list of neighbors for a node
+        """
+        if not self.has_node(node):
+            raise "Node %s not in graph" % node
+        return self.node_neighbors[node].keys()
+
+    def del_node(self, node):
+        """
+        Deletes a node from a graph
+        """
+        for each in list(self.neighbors(node)):
+            if (each != node):
+                self.del_edge((each, node))
+        del(self.node_neighbors[node])
+
+    def del_edge(self, edge):
+        """
+        Deletes an edge from a graph. An edge, here, is a pair like
+        C(m,n) or a tuple
+        """
+        u, v = edge
+        if not self.has_edge(edge):
+            raise Exception("Edge (%s, %s) not an existing edge" % (u, v))
+        del self.node_neighbors[u][v]
+        if (u!=v):
+            del self.node_neighbors[v][u]
+
+    def node_order(self, node):
+        """
+        Return the order or degree of a node
+        """
+        return len(self.neighbors(node))
+
+
+    def edges(self):
+        """
+        Returns a list of edges in the graph
+        """
+        edge_list = []
+        for node in self.nodes():
+            edges = [(node, each) for each in self.neighbors(node)]
+            edge_list.extend(edges)
+        return edge_list
+
+    # Methods for setting properties on nodes and edges
+    def set_edge_weight(self, edge, wt):
+        """Set the weight of the edge """
+        u, v = edge
+        if not self.has_edge(edge):
+            raise Exception("Edge (%s, %s) not an existing edge" % (u, v))
+        self.node_neighbors[u][v] = wt
+        if u != v:
+            self.node_neighbors[v][u] = wt
+
+    def get_edge_weight(self, edge):
+        """Returns the weight of an edge """
+        u, v = edge
+        if not self.has_edge((u, v)):
+            raise Exception("%s not an existing edge" % edge)
+        return self.node_neighbors[u].get(v, self.DEFAULT_WEIGHT)
+
+    def get_edge_weights(self):
+        """ Returns a list of all edges with their weights """
+        edge_list = []
+        unique_list = {}
+        for u in self.nodes():
+            for v in self.neighbors(u):
+                if u not in unique_list.get(v, set()):
+                    edge_list.append((self.node_neighbors[u][v], (u, v)))
+                    unique_list.setdefault(u, set()).add(v)
+        return edge_list
