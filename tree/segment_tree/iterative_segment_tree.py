@@ -51,3 +51,5 @@ class SegmentTree:
                 res = self.tree[r] if res is None else self.fn(res, self.tree[r])
             l, r = (l + 1) // 2, (r - 1) // 2
         return res
+
+

@@ -2,6 +2,8 @@ def dfs(node,parent,ptaken):
 	if dp[node][ptaken]!=-1:
 		return dp[node][ptaken]
 	taking,nottaking=1,0
+	total=0
+	tways
 	for neig in graph[node]:
 		if neig!=parent:
 			taking+=dfs(neig,node,1)

@@ -1,5 +1,4 @@
-from bisect import bisect_left 
-import sys
+
 from sys import stdin,stdout
 def build_tree(idx,l,r):
 	if l==r:
@@ -72,7 +71,7 @@ def query(idx,l,r,x,y,key):
 
 if __name__ == '__main__':
 	n=int(stdin.readline())
-	sys.setrecursionlimit(2*n)
+	sys.setrecursionlimit(5*n)
 	arr=list(map(int,stdin.readline().split()))
 	q=int(stdin.readline())
 	tree=[[] for i in range(4*n-1)]
