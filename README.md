@@ -4,7 +4,7 @@
 
 :zap: Feel free to contribute but any problem sollution or algorithms should be in python \
 :star: If you find it useful please give a star. \
-:bomb: You may get tle in some sollutions .Use templates from  extras folder for fast I/O\
+:bomb: You may get tle in some sollutions .Use templates from  extras folder for fast IO\
 :rainbow:
 #### Todo
 :point_right: 1.Adding advanced datastructures and algorithms such as Heavy light decomposition \
