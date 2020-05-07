@@ -128,3 +128,8 @@ if __name__ == "__main__":
 
         # After finish input and graph creation, use Kruskal algorithm for MST:
         print("MST weights sum:", kruskal(n, edges, ds))
+
+
+
+
+

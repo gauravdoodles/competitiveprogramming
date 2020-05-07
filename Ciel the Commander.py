@@ -7,6 +7,7 @@ class Tree:
         self.tree = [[] for _ in range(self.size)]
         self.iscentroid = [False] * self.size
         self.ctree = [[] for _ in range(self.size)]
+        self.characters=[None for _ in range(self.size)]
     
     def dfs(self, src, visited, subtree):
         visited[src] = True
@@ -45,12 +46,12 @@ class Tree:
         self.iscentroid[centroid] = True
         return centroid
 
-    def decomposeTree(self, root):
+    def decomposeTree(self, root,ch):
         centroid_tree = self.findCentroidUtil(root)
-        print(centroid_tree,end=' ')
+        self.characters[centroid_tree]=ch
         for adj in self.tree[centroid_tree]:
             if not self.iscentroid[adj]:
-                centroid_subtree = self.decomposeTree(adj)
+                centroid_subtree = self.decomposeTree(adj,ch+1)
                 self.ctree[centroid_tree].append(centroid_subtree)
                 self.ctree[centroid_subtree].append(centroid_tree)
             
@@ -61,33 +62,23 @@ class Tree:
         self.tree[dest].append(src)
 
     def printf(self,n):
-        newlist=[[]for i in range(n+1)]
-        for i in range(len(self.ctree)):
-            for j in self.ctree[i]:
-                newlist[i].append(j)
+        newlist=[]
+        for i in range(1,len(self.characters)):
+            newlist.append(self.characters[i])
         return newlist
 
 
     
 
 if __name__ == '__main__':
-    tree = Tree(15)
-    # A tree with 15 nodes
-    tree.addEdge(1, 2)
-    tree.addEdge(2, 3)
-    tree.addEdge(3, 4)
-    tree.addEdge(3, 5)
-    tree.addEdge(3, 6)
-    tree.addEdge(5, 7)
-    tree.addEdge(5, 8)
-    tree.addEdge(6, 9)
-    tree.addEdge(7, 10)
-    tree.addEdge(9, 11)
-    tree.addEdge(10, 12)
-    tree.addEdge(11, 13)
-    tree.addEdge(11, 14)
-    tree.addEdge(14, 15)
-
-    print("DFS traversal of generated Centroid tree is:")
-    centroidtree=tree.decomposeTree(1)
+    n=int(sys.stdin.readline())
+    tree = Tree(n)
+    for _ in range(n-1):
+        a,b=map(int,sys.stdin.readline().split())
+        tree.addEdge(a, b)
+        
+    tree.decomposeTree(1,65)
+    centroidtree=tree.printf(4)
+    for i in  centroidtree:
+        sys.stdout.write(str(chr(i)) +" ")
     
