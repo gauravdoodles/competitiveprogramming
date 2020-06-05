@@ -12,7 +12,7 @@ def dfs(x:int,parent:int):
 		taking+=dp[y][1]
 		nottaking+=dp[y][0]
 	dp[x][1]=nottaking
-	dp[x][False]=max(taking,nottaking)
+	dp[x][0]=max(taking,nottaking)
 
 if __name__ == '__main__':
 	n=int(input())
