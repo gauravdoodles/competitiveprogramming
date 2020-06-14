@@ -4,7 +4,7 @@
 # n=input()
 n=5
 parent=[-1 for i in range(n+1)]
-
+rank=[1 for i in range(n)]
 def find(a):
     if parent[a]<0:
         return a
@@ -14,6 +14,18 @@ def find(a):
         parent[a]=x
         return x
         
+def unionbyrank(a,b):
+    a=find(a)
+    b=find(b)
+    if a==b:
+        return
+    if rank[a]>rank[b]:
+        parent[b]=a
+        rank[a]+=rank[b]
+    if rank[b]>rank[a]:
+        parent[a]=b
+        rank[b]+=rank[a]
+
 
 def union(a,b):
     parent[a]=min(parent[a],parent[b])
